@@ -3,23 +3,40 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+app.use(express.static('public'))
 
 const routerProductos = express.Router();
+app.use('/api/productos', routerProductos);
 
-const productos = [
-    {
-        title: 'silla',
-        price: 200,
-        thumbnail: 'x',
-        id: 1
-    }]
+const productos = [{
+
+}]
+
+function capturar(){
+
+    function Productos(nombre, id, url){
+        this.nombre = nombre;
+        this.id = id;
+        this.url = url;
+    }
+    
+    const nombreProducto = document.getElementById('nombre').value;
+    const precioProducto = document.getElementById('precio').value;
+    const urlProducto = document.getElementById('url').value;
+
+}
 
 
-express.Router.get('/api/productos', (req, res) => {
+
+
+
+
+
+routerProductos.get('', (req, res) => {
     res.json(productos);
 });
 
-express.Router.get('/api/productos/:id', (req, res) => {
+routerProductos.get('/:id', (req, res) => {
     const idProducto = req.params.id;
     const productoEncontrado = productos.find(productos => productos.id == idProducto);
     if(!productoEncontrado){
@@ -29,39 +46,57 @@ express.Router.get('/api/productos/:id', (req, res) => {
     }
 });
 
-express.Router.post('/api/productos', (req, res) => {
-    productos.push(req.body);
-    const id =+ 1;
-    const productoId = [];
-    productoId['id'] = id;
-    productos.push(productoId);
+routerProductos.post('', (req, res) => {
+
+    res.render('index')
+    let id = productos.length + 1;
+    productos['id'] = id;
+    
+    productos.push(nombreProducto, precioProducto, urlProducto);
+
     res.json(productos);
-
 });
 
-express.Router.put('/api/productos/:id', (req, res) => {
+routerProductos.put('/:id', (req, res) => {
     const idProducto = req.params.id;
     const productoEncontrado = productos.find(productos => productos.id == idProducto);
     if(!productoEncontrado){
         res.status(404).send('Producto no encontrado')
     }else{
-        productos[productoEncontrado] = req.body;
-        res.json(productos);
+        const idEliminar = idProducto - 1;
+        if(idEliminar == 0){
+            productos.splice(idEliminar, idEliminar + 1);
+            productos.push(nombreProducto, precioProducto, urlProducto, idProducto);
+            res.json(productos);
+        }else{
+            productos.splice(idEliminar, idEliminar)
+            productos.push(nombreProducto, precioProducto, urlProducto, idProducto);
+            res.json(productos);
+        }
+        
     }
 });
 
-express.Router.delete('/api/productos/:id', (req, res) => {
+routerProductos.delete('/:id', (req, res) => {
     const idProducto = req.params.id;
     const productoEncontrado = productos.find(productos => productos.id == idProducto);
     if(!productoEncontrado){
         res.status(404).send('Producto no encontrado')
+
     }else{
-        json(productos[productoEncontrado]) = {};
-        res.json(productos);
+        const idEliminar = idProducto - 1;
+        if(idEliminar == 0){
+            productos.splice(idEliminar, idEliminar + 1);
+            res.json(productos);
+        }else{
+            productos.splice(idEliminar, idEliminar)
+            res.json(productos);
+        }
+        
     }
 });
 
 
-express.Router.listen(8080, () =>{
-    console.log('Funcionando')
-});
+const server = app.listen(8080, () => {
+    console.log(`Servidor Http escuchando en el puerto ${server.address().port}`)
+})
